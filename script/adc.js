@@ -4,6 +4,7 @@ module.exports.config = {
   role: 3,
   hasPrefix: true,
   usage: '[reply or text]',
+  aliases: ['gpt', 'openai'],
   description: 'Apply code from buildtooldev and pastebin',
   credits: 'Deveploper',
   cooldown: 5
