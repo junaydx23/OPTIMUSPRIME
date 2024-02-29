@@ -1,49 +1,99 @@
-const axios = require("axios");
-const fs = require("fs-extra");
-const path = require("path");
-const KievRPSSecAuth = "1uZFkHeMYUc8wkjwDtcAobsI_2HKnAr80tEv2rR8X0pe7WVXREVcXLXrhIDebColJRSZ2hPwX1LA-xJRsrlc8fUtG2cPWjJenISpd95r3HpNFe6qkZ4C1p4Moo5yvowl5_5bzl3N4WO5nMraLG98cWiLdEu9OH_uwz075dGYsuk7mSxql0G-C8lgmhIi5MUobqwmWj05jF7mPRH2IjA2M3R8UjoAjiKDaWEMmeeTl6tI";
-const _U = "1uZFkHeMYUc8wkjwDtcAobsI_2HKnAr80tEv2rR8X0pe7WVXREVcXLXrhIDebColJRSZ2hPwX1LA-xJRsrlc8fUtG2cPWjJenISpd95r3HpNFe6qkZ4C1p4Moo5yvowl5_5bzl3N4WO5nMraLG98cWiLdEu9OH_uwz075dGYsuk7mSxql0G-C8lgmhIi5MUobqwmWj05jF7mPRH2IjA2M3R8UjoAjiKDaWEMmeeTl6tI";
+const axios = require('axios');
+const { getStreamFromURL } = global.utils;
+
 module.exports.config = {
-name: 'bing',
-  version: '2.0.0',
-  credits: 'Null69', //api by samir
-  aliases: ['dalle3'],
-  description: '𝗗𝗔𝗟𝗟𝗘 𝖼𝗈𝗆𝗆𝖺𝗇𝖽 𝗆𝖺𝖽𝖾 𝖻𝗒 𝖢𝗅𝗂𝖿𝖿 𝖵𝗂𝗇𝖼𝖾𝗇𝗍 𝖳𝗈𝗋𝗋𝖾𝗏𝗂𝗅𝗅𝖺𝗌 𝗂𝗌 𝗎𝗌𝖾 𝗍𝗈 𝗀𝖾𝗇𝖾𝗋𝖺𝗍𝖾 𝖺𝗂 𝗉𝗂𝖼𝗍𝗎𝗋𝖾𝗌 𝗎𝗌𝗂𝗇𝗀 𝗍𝖾𝗑𝗍',
+    name: "bing",
+    version: "2,0",
+    credits: "MarianCross",
+    aliases: ["d3"],
+    description: {
+      en: "Latest DALL·E 3 image generator",
+    },
   role: 0
-};
+  };
+  
+  module.exports.run = async function ({ message, args }) {
+    try {
+      if (args.length === 0) {
+        await message.reply("⚠ | Please provide a prompt.");
+        return;
+      }
 
-module.exports.run = async function ({ api, event, args }) {
-	const keySearch = args.join(" ");
-	const indexOfHyphen = keySearch.indexOf('-');
-	const keySearchs = indexOfHyphen !== -1 ? keySearch.substr(0, indexOfHyphen).trim() : keySearch.trim();
-	const numberSearch = parseInt(keySearch.split("-").pop().trim()) || 4;
+      const prompt = args.join(" ");
+      const encodedPrompt = encodeURIComponent(prompt);
+      const Key = "rubish69";
+      const cookies = [
+"1U1lW4tM2FI4QuF2ycFk2aEwzftdDvU2tx1kOWnAHeC4gssGeeCHs4j0I1V6x-7rh-w6DaWoNSrW0fWcs58yUqd92b1zO0otTcqq0Z3rvHlQGe7zX14BCjdffbjmtcX2TtSR3GZYP_cHOxqjc0E9OSA3KJ7kMGnmlUCYksnBFCfE_hjnlGW6txMgzUCwRO1XIp560LlKcC7b-4CK1yyM90g"
+]; 
 
-	try {
-		const res = await axios.get(`https://api-dalle-gen.onrender.com/dalle3?auth_cookie_U=${_U}&auth_cookie_KievRPSSecAuth=${KievRPSSecAuth}&prompt=${encodeURIComponent(keySearchs)}`);
-		const data = res.data.results.images;
+      const randomCookie = cookies[Math.floor(Math.random() * cookies.length)];
 
-		if (!data || data.length === 0) {
-			api.sendMessage("No images found for the provided query.", event.threadID, event.messageID);
-			return;
-		}
+      const apiURL = `https://dall-e-3-rubish.onrender.com/api/gen-img-url?prompt=${encodedPrompt}&cookie=${randomCookie}&apiKey=${Key}`;
 
-		const imgData = [];
-		for (let i = 0; i < Math.min(numberSearch, data.length); i++) {
-			const imgResponse = await axios.get(data[i].url, { responseType: 'arraybuffer' });
-			const imgPath = path.join(__dirname, 'cache', `${i + 1}.jpg`);
-			await fs.outputFile(imgPath, imgResponse.data);
-			imgData.push(fs.createReadStream(imgPath));
-		}
+      const startTime = Date.now();
+      const processingMessage = await message.reply(`
+⏳ | Processing your imagination
 
-		await api.sendMessage({
-			attachment: imgData,
-			body: `Here's your generated image`
-		}, event.threadID, event.messageID);
+Prompt: ${prompt}
 
-	} catch (error) {
-		console.error(error);
-		api.sendMessage("cookie of the command. Is expired", event.threadID, event.messageID);
-	} finally {
-		await fs.remove(path.join(__dirname, 'cache'));
-	}
-};
+Please wait a few seconds...`);
+
+      const response = await axios.get(apiURL);
+
+      const endTime = Date.now();
+      const processingTimeInSeconds = ((endTime - startTime) / 1000).toFixed(2);
+
+      const data = response.data;
+      if (!data.imageLinks || data.imageLinks.length === 0) {
+        if (data.errorMessage === "Invalid API key") {
+          await message.reply("⚠ | Invalid API key. Please check your API key and try again.");
+        } else {
+          await message.reply(`
+⭕ | No images found for the 
+
+❏ | prompt: ${prompt}. 
+
+❏ | Please try again.`);
+        }
+        return;
+      }
+
+      const attachment = await Promise.all(data.imageLinks.map(async (imgURL) => {
+        const imgStream = await getStreamFromURL(imgURL);
+        return imgStream;
+      }));
+
+      await message.reply({
+        body: `
+✅ | Here are the images for..
+
+❏ | Prompt: "${prompt}" 
+
+❏ | Processing Time: ${processingTimeInSeconds}s`,
+        attachment: attachment,
+      });
+
+      message.unsend((await processingMessage).messageID);
+    } catch (error) {
+      console.error(error);
+
+      if (error.response && error.response.status === 401) {
+        await message.reply("⚠ | Unauthorized your API key \n\nContact with Rubish for a new apikey");
+      } else if (error.response && error.response.data) {
+        const responseData = error.response.data;
+
+        if (responseData.errorMessage === "Pending") {
+          await message.reply("⚠ | This prompt has been blocked by Bing. Please try again with another prompt.");
+        } else if (typeof responseData === 'object') {
+          const errorMessages = Object.entries(responseData).map(([key, value]) => `${key}: ${value}`).join('\n');
+          await message.reply(`⚠ | Server error details:\n\n${errorMessages}`);
+        } else if (error.response.status === 404) {
+          await message.reply("⚠ | The DALL·E 3 API endpoint was not found. Please check the API URL.");
+        } else {
+          await message.reply(`⚠ | Rubish dalle -3 server busy now\n\nPlease try again later`);
+        }
+      } else {
+        await message.reply("⚠ | An unexpected error occurred. Please try again later.");
+      }
+    }
+  };
