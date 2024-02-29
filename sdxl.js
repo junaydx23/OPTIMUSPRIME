@@ -3,8 +3,8 @@ const axios = require("axios");
 
 module.exports = {
   config: {
-    name: "dalle3",
-    aliases: ['dalle'],
+    name: "sdxl",
+    aliases: ['draw'],
     author: "kshitiz",
     version: "2.0",
     cooldowns: 10,
