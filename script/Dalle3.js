@@ -1,8 +1,8 @@
 const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
-const KievRPSSecAuth = "";
-const _U = "";
+const KievRPSSecAuth = "1U1lW4tM2FI4QuF2ycFk2aEwzftdDvU2tx1kOWnAHeC4gssGeeCHs4j0I1V6x-7rh-w6DaWoNSrW0fWcs58yUqd92b1zO0otTcqq0Z3rvHlQGe7zX14BCjdffbjmtcX2TtSR3GZYP_cHOxqjc0E9OSA3KJ7kMGnmlUCYksnBFCfE_hjnlGW6txMgzUCwRO1XIp560LlKcC7b-4CK1yyM90g";
+const _U = "1U1lW4tM2FI4QuF2ycFk2aEwzftdDvU2tx1kOWnAHeC4gssGeeCHs4j0I1V6x-7rh-w6DaWoNSrW0fWcs58yUqd92b1zO0otTcqq0Z3rvHlQGe7zX14BCjdffbjmtcX2TtSR3GZYP_cHOxqjc0E9OSA3KJ7kMGnmlUCYksnBFCfE_hjnlGW6txMgzUCwRO1XIp560LlKcC7b-4CK1yyM90g";
 module.exports.config = {
 	name: "dalle3",
 	version: "1.0",
